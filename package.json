@@ -1,0 +1,98 @@
+{
+  "name": "gamedevjs-ui",
+  "displayName": "gamedevjs-ui",
+  "description": "Companion extension to the gamedev.js JavaScript game engine",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "gamedevjs-ui.helloWorld",
+        "title": "Hello World"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sceneExplorer",
+          "title": "JavaScript Game Developer",
+          "icon": "./images/gamepad.svg"
+        }
+      ]
+    },
+    "views": {
+      "sceneExplorer": [
+        {
+          "id": "sceneOutliner",
+          "name": "%extension.sceneOutliner%"
+        },
+        {
+          "id": "objectDetails",
+          "name": "%extension.objectDetails%",
+          "visibility": "collapsed"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "%gamedevjs.Configuration%",
+      "properties": {
+        "gamedevjs.foobar": {
+          "type": "string",
+          "default": "Foo",
+          "description": "%gamedevjs.foobar%",
+          "enum": [
+            "Foo",
+            "Bar"
+          ],
+          "enumDescriptions": [
+            "%gamedevjs.foobar.foo.description%",
+            "%gamedevjs.foobar.bar.description%"
+          ],
+          "scope": "application"
+        },
+        "gamedevjs.logDebugInfo": {
+          "type": "boolean",
+          "default": false,
+          "description": "%gamedevjs.logDebugInfo%",
+          "scope": "window"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.88.0",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "@vscode/test-cli": "^0.0.8",
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.57.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "three": "^0.163.0"
+  }
+}
