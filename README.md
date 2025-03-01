@@ -1,6 +1,6 @@
-# gamedevjs-ui README
+# gamejs-ui README
 
-This is the README for your extension "gamedevjs-ui". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "gamejs-ui". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

@@ -1,21 +1,59 @@
 {
-  "name": "gamedevjs-ui",
-  "displayName": "gamedevjs-ui",
+  "name": "vscode-gamejs",
+  "displayName": "gamejs-ui",
   "description": "Companion extension to the gamedev.js JavaScript game engine",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.88.0"
   },
   "categories": [
-    "Other"
+    "Debuggers",
+    "Language Packs",
+    "Visualization"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "gamedevjs-ui.helloWorld",
+        "command": "vscode-gamejs.helloWorld",
+        "category": "JavaScript Game Developer",
         "title": "Hello World"
+      },
+      {
+        "command": "vscode-gamejs.createProject",
+        "category": "JavaScript Game Developer",
+        "title": "Create New Project..."
+      },
+      {
+        "command": "vscode-gamejs.jscene.new",
+        "category": "JavaScript Game Developer",
+        "title": "Create New Scene"
+      },
+      {
+        "command": "sceneOutliner.refreshList",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "gamejs.jscene",
+        "displayName": "Three.js Scene Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.jscene"
+          }
+        ]
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "workbench.explorer.emptyView",
+        "contents": "You can [open a folder containing a game.js project](command:vscode.openFolder), or create a new game.js Project\n[Create game.js Project](command:vscode-gamejs.createProject)"
       }
     ],
     "viewsContainers": {
@@ -23,7 +61,7 @@
         {
           "id": "sceneExplorer",
           "title": "JavaScript Game Developer",
-          "icon": "./images/gamepad.svg"
+          "icon": "./resources/gamepad-1080x1080.png"
         }
       ]
     },
@@ -42,30 +80,42 @@
     },
     "configuration": {
       "type": "object",
-      "title": "%gamedevjs.Configuration%",
+      "title": "%gamejs.Configuration%",
       "properties": {
-        "gamedevjs.foobar": {
+        "gamejs.displayUnits": {
           "type": "string",
-          "default": "Foo",
-          "description": "%gamedevjs.foobar%",
+          "default": "Metric",
+          "description": "%gamejs.displayUnits%",
           "enum": [
-            "Foo",
-            "Bar"
+            "Metric",
+            "Imperial"
           ],
           "enumDescriptions": [
-            "%gamedevjs.foobar.foo.description%",
-            "%gamedevjs.foobar.bar.description%"
+            "%gamejs.displayUnits.metric.description%",
+            "%gamejs.displayUnits.imperial.description%"
           ],
-          "scope": "application"
+          "scope": "window"
         },
-        "gamedevjs.logDebugInfo": {
+        "gamejs.exampleFlagSetting": {
           "type": "boolean",
           "default": false,
-          "description": "%gamedevjs.logDebugInfo%",
+          "description": "%gamejs.exampleFlagSetting%",
           "scope": "window"
         }
       }
-    }
+    },
+    "languages": [
+      {
+        "id": "jscene",
+        "extensions": [
+          ".jscene"
+        ],
+        "icon": {
+          "light": "./media/icons/jscene-light.svg",
+          "dark": "./media/icons/jscene-dark.svg"
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -81,11 +131,13 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/three": "^0.174.0",
     "@types/vscode": "^1.88.0",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "@vscode/test-cli": "^0.0.8",
     "@vscode/test-electron": "^2.3.9",
+    "esbuild": "^0.25.0",
     "eslint": "^8.57.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
@@ -93,6 +145,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "three": "^0.163.0"
+    "@vscode/codicons": "^0.0.36",
+    "three": "^0.163.0",
+    "vscode-languageclient": "^9.0.1"
   }
 }
