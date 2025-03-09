@@ -274,7 +274,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		const threeUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this.context.extensionUri, 'media', 'libs', 'three.min.js'));
 		const threeEditorUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this.context.extensionUri, 'media', 'libs', 'three.editor.min.js'));
+			this.context.extensionUri, 'media', 'libs', 'three.viewport.min.js'));
 
 		const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this.context.extensionUri, 'media', 'reset.css'));

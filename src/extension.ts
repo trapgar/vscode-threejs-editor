@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-gamejs" is now active!');
+	console.log('Congratulations, your extension "vscode-threejs-editor" is now active!');
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
@@ -27,6 +27,9 @@ export function activate(context: vscode.ExtensionContext) {
 			instanceId => vscode.commands.executeCommand('objectDetails.focus')
 		),
 		vscode.commands.registerCommand('sceneOutliner.deleteEntry', (node: Dependency) => vscode.window.showInformationMessage(`Successfully called delete entry on ${node.label}.`)),
+		vscode.commands.registerCommand('vscode-threejs-editor.addMesh', () => {
+			vscode.window.showInformationMessage('Add Command Executed!');
+		}),
 
 		JSceneEditorProvider.register(context),
 	);

@@ -1,5 +1,5 @@
 {
-  "name": "vscode-gamejs",
+  "name": "vscode-threejs-editor",
   "displayName": "gamejs-ui",
   "description": "Companion extension to the gamedev.js JavaScript game engine",
   "version": "0.0.1",
@@ -16,17 +16,22 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-gamejs.helloWorld",
+        "command": "vscode-threejs-editor.addMesh",
+        "category": "JavaScript Game Developer",
+        "title": "Add Mesh"
+      },
+      {
+        "command": "vscode-threejs-editor.helloWorld",
         "category": "JavaScript Game Developer",
         "title": "Hello World"
       },
       {
-        "command": "vscode-gamejs.createProject",
+        "command": "vscode-threejs-editor.createProject",
         "category": "JavaScript Game Developer",
         "title": "Create New Project..."
       },
       {
-        "command": "vscode-gamejs.jscene.new",
+        "command": "vscode-threejs-editor.jscene.new",
         "category": "JavaScript Game Developer",
         "title": "Create New Scene"
       },
@@ -53,7 +58,7 @@
     "viewsWelcome": [
       {
         "view": "workbench.explorer.emptyView",
-        "contents": "You can [open a folder containing a game.js project](command:vscode.openFolder), or create a new game.js Project\n[Create game.js Project](command:vscode-gamejs.createProject)"
+        "contents": "You can [open a folder containing a game.js project](command:vscode.openFolder), or create a new game.js Project\n[Create game.js Project](command:vscode-threejs-editor.createProject)"
       }
     ],
     "viewsContainers": {

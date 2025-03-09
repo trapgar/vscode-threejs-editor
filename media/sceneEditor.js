@@ -11,7 +11,9 @@
 
 	const root = /** @type {HTMLElement} */ (document.getElementById('root'));
 	// @ts-ignore
-	const editor = new THREE.Editor(root);
+	const viewport = new THREE.Viewport(root);
+	// @ts-ignore
+	window.editor = viewport;
 
 	// document.querySelector('.add-button')
 	// 	?.querySelector('button')
@@ -33,23 +35,22 @@
 	 * Render the document in the webview.
 	 */
 	function updateContent(/** @type {string} */ text) {
-		let json;
-		try {
-			if (!text) {
-				text = '{}';
+		if (text) {
+			try {
+				const json = JSON.parse(text);
+				viewport.fromJson(json);
 			}
-			json = JSON.parse(text);
+			catch {
+				root.style.display = 'none';
+				$error.innerHTML = `<div class="editor-placeholder-icon-container"><span class="codicon codicon-error"></span></div><div class="editor-placeholder-label-container"><span>The editor could not be opened because the file is not valid JSON.</span></div>`;
+				$error.style.display = '';
+				return;
+			}
+			root.style.display = '';
+			$error.style.display = 'none';
 		}
-		catch {
-			root.style.display = 'none';
-			$error.innerHTML = `<div class="editor-placeholder-icon-container"><span class="codicon codicon-error"></span></div><div class="editor-placeholder-label-container"><span>The editor could not be opened because the file is not valid JSON.</span></div>`;
-			$error.style.display = '';
-			return;
-		}
-		root.style.display = '';
-		$error.style.display = 'none';
-
-		// TODO: tell the editor to load from json
+		else
+			viewport.scaffold();
 	}
 
 	// Handle messages sent from the extension to the webview
@@ -77,5 +78,5 @@
 		updateContent(state.text);
 	}
 
-	editor.scaffold();
+	// editor.fromJson();
 }());
