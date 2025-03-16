@@ -16,11 +16,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-threejs-editor.addMesh",
-        "category": "JavaScript Game Developer",
-        "title": "Add Mesh"
-      },
-      {
         "command": "vscode-threejs-editor.helloWorld",
         "category": "JavaScript Game Developer",
         "title": "Hello World"
@@ -42,6 +37,46 @@
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
         }
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.basic.todo",
+        "title": "TODO"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.lights.directional",
+        "title": "Directional Light"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.lights.point",
+        "title": "Point Light"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.lights.spot",
+        "title": "Spot Light"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.lights.rect",
+        "title": "Rect Light"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.lights.sky",
+        "title": "Sky Light"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.shapes.cube",
+        "title": "Cube"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.shapes.sphere",
+        "title": "Sphere"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.shapes.cone",
+        "title": "Cone"
+      },
+      {
+        "command": "vscode-threejs-editor.addToTheProject.shapes.plane",
+        "title": "Plane"
       }
     ],
     "customEditors": [
@@ -83,6 +118,84 @@
         }
       ]
     },
+    "menus": {
+      "editor/title": [
+        {
+          "submenu": "vscode-threejs-editor.addToTheProject",
+          "when": "resourceLangId == jscene",
+          "group": "navigation"
+        }
+      ],
+      "vscode-threejs-editor.addToTheProject": [
+        {
+          "submenu": "vscode-threejs-editor.addToTheProject.basic"
+        },
+        {
+          "submenu": "vscode-threejs-editor.addToTheProject.lights"
+        },
+        {
+          "submenu": "vscode-threejs-editor.addToTheProject.shapes"
+        }
+      ],
+      "vscode-threejs-editor.addToTheProject.basic": [
+        {
+          "command": "vscode-threejs-editor.addToTheProject.basic.todo"
+        }
+      ],
+      "vscode-threejs-editor.addToTheProject.lights": [
+        {
+          "command": "vscode-threejs-editor.addToTheProject.lights.directional"
+        },
+        {
+          "command": "vscode-threejs-editor.addToTheProject.lights.point"
+        },
+        {
+          "command": "vscode-threejs-editor.addToTheProject.lights.spot"
+        },
+        {
+          "command": "vscode-threejs-editor.addToTheProject.lights.rect"
+        },
+        {
+          "command": "vscode-threejs-editor.addToTheProject.lights.sky"
+        }
+      ],
+      "vscode-threejs-editor.addToTheProject.shapes": [
+        {
+          "command": "vscode-threejs-editor.addToTheProject.shapes.cube"
+        },
+        {
+          "command": "vscode-threejs-editor.addToTheProject.shapes.sphere"
+        },
+        {
+          "command": "vscode-threejs-editor.addToTheProject.shapes.cone"
+        },
+        {
+          "command": "vscode-threejs-editor.addToTheProject.shapes.plane"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "vscode-threejs-editor.addToTheProject",
+        "label": "Quickly add to the project",
+        "icon": {
+          "light": "resources/light/addToTheProject.svg",
+          "dark": "resources/dark/addToTheProject.svg"
+        }
+      },
+      {
+        "id": "vscode-threejs-editor.addToTheProject.basic",
+        "label": "Basic"
+      },
+      {
+        "id": "vscode-threejs-editor.addToTheProject.lights",
+        "label": "Lights"
+      },
+      {
+        "id": "vscode-threejs-editor.addToTheProject.shapes",
+        "label": "Shapes"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "%gamejs.Configuration%",

@@ -15,14 +15,6 @@
 	// @ts-ignore
 	window.editor = viewport;
 
-	// document.querySelector('.add-button')
-	// 	?.querySelector('button')
-	// 	?.addEventListener('click', () => {
-	// 		vscode.postMessage({
-	// 			type: 'add'
-	// 		});
-	// 	});
-
 	const $error = document.createElement('div');
 	document.body.appendChild($error);
 	$error.className = 'monaco-editor-pane-placeholder'
@@ -51,6 +43,8 @@
 		}
 		else
 			viewport.scaffold();
+
+		root.classList.remove('loading');
 	}
 
 	// Handle messages sent from the extension to the webview
@@ -68,8 +62,14 @@
 				vscode.setState({ text });
 
 				return;
+			case 'add.shape':
+				const shape = message.shape;
+				viewport.dispatchEvent({ type: 'add.shape', shape });
+				return;
 		}
 	});
+
+	console.log(`Initialized new THREE.js scene editor.`);
 
 	// Webviews are normally torn down when not visible and re-created when they become visible again.
 	// State lets us save information across these re-loads
@@ -77,6 +77,4 @@
 	if (state) {
 		updateContent(state.text);
 	}
-
-	// editor.fromJson();
 }());

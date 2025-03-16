@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { getNonce, Disposable } from '../utils';
 import three from 'three';
+import { EXTENSION_PREFIX } from '../utils/constants';
 
 /**
  * Define the type of edits used in paw draw files.
@@ -192,15 +193,42 @@ class JSceneDocument extends Disposable implements vscode.CustomDocument {
  * - Backing up a custom editor.
  */
 export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
-
 	public static register(context: vscode.ExtensionContext): vscode.Disposable {
 		const provider = new JSceneEditorProvider(context);
 		const providerRegistration = vscode.window.registerCustomEditorProvider(JSceneEditorProvider.viewType, provider);
+		context.subscriptions.push(
+			...[
+				"vscode-threejs-editor.addToTheProject.basic.todo",
+			].map(cmd => vscode.commands.registerCommand(cmd, () => vscode.window.showInformationMessage(`Add Command '${cmd}' Executed!`))),
+			...[
+				"directional",
+				"point",
+				"spot",
+				"rect",
+				"sky",
+			].map(light => {
+				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.lights.${light}`, () => {
+					return vscode.window.showInformationMessage(`Add Light '${light}' Command Executed!`);
+				});
+			}),
+			...[
+				"cube",
+				"sphere",
+				"cone",
+				"plane"
+			].map(shape => {
+				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.shapes.${shape}`,
+					() => {
+						provider.addNewShape(shape.split('.').at(-1)!);
+					}
+				);
+			})
+		);
 		return providerRegistration;
 	}
 
 	private static readonly viewType = 'gamejs.jscene';
-	private static readonly scratchCharacters = ['😸', '😹', '😺', '😻', '😼', '😽', '😾', '🙀', '😿', '🐱'];
+	private webview?: vscode.Webview;
 
 	constructor(
 		private readonly context: vscode.ExtensionContext
@@ -216,6 +244,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		webviewPanel: vscode.WebviewPanel,
 		_token: vscode.CancellationToken
 	): Promise<void> {
+		this.webview = webviewPanel.webview;
 		// Setup initial content for the webview
 		webviewPanel.webview.options = {
 			enableScripts: true,
@@ -251,10 +280,6 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		// Receive message from the webview.
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
-				case 'add':
-					this.addNewScratch(document);
-					return;
-
 				case 'delete':
 					this.deleteScratch(document, e.id);
 					return;
@@ -271,8 +296,6 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		// Local path to script and css for the webview
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this.context.extensionUri, 'media', 'sceneEditor.js'));
-		const threeUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this.context.extensionUri, 'media', 'libs', 'three.min.js'));
 		const threeEditorUri = webview.asWebviewUri(vscode.Uri.joinPath(
 			this.context.extensionUri, 'media', 'libs', 'three.viewport.min.js'));
 
@@ -308,9 +331,8 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 				<title>THREE.js Scene Editor</title>
 			</head>
 			<body>
-				<div id="root"></div>
+				<div id="root" class="loading"></div>
 
-				<!-- <script nonce="${nonce}" src="${threeUri}"></script> -->
 				<script nonce="${nonce}" src="${threeEditorUri}"></script>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
@@ -320,19 +342,21 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 	/**
 	 * Add a new scratch to the current document.
 	 */
-	private addNewScratch(document: vscode.TextDocument) {
-		const json = this.getDocumentAsJson(document);
-		const character = JSceneEditorProvider.scratchCharacters[Math.floor(Math.random() * JSceneEditorProvider.scratchCharacters.length)];
-		json.scratches = [
-			...(Array.isArray(json.scratches) ? json.scratches : []),
-			{
-				id: getNonce(),
-				text: character,
-				created: Date.now(),
-			}
-		];
+	addNewShape(shape: string) {
+		// const json = this.getDocumentAsJson(document);
+		// const character = JSceneEditorProvider.scratchCharacters[Math.floor(Math.random() * JSceneEditorProvider.scratchCharacters.length)];
+		// json.scratches = [
+		// 	...(Array.isArray(json.scratches) ? json.scratches : []),
+		// 	{
+		// 		id: getNonce(),
+		// 		text: character,
+		// 		created: Date.now(),
+		// 	}
+		// ];
 
-		return this.updateTextDocument(document, json);
+		// return this.updateTextDocument(document, json);
+
+		this.webview?.postMessage({ type: 'add.shape', shape });
 	}
 
 	/**
