@@ -1,2 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F6F6F6" xmlns:bx="https://boxy-svg.com"><defs><bx:export><bx:file format="svg"/></bx:export></defs><path d="M 209.407 -170.701 L 772.497 -740.885 L 781.17 -460.07 C 771.793 -465.8 761.894 -470.37 751.475 -473.75 C 741.056 -477.13 730.116 -479.87 718.654 -481.96 L 718.654 -641.37 L 307.61 -230.33 L 506.881 -230.33 C 511.048 -218.35 516.258 -207.14 522.51 -196.73 C 528.761 -186.31 535.794 -176.67 543.609 -167.81 L 209.407 -170.701 Z M 307.61 -230.33 L 718.654 -641.37 L 611.986 -534.7 L 517.43 -440.15 L 420.921 -343.64 L 307.61 -230.33 Z" style="transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(0.707107, -0.707107, 0.707107, 0.707107, 10.079597, -25.970314)"/><path d="M 682.993 -369.79 L 682.993 -463.57 L 589.219 -463.57 L 589.219 -526.08 L 682.993 -526.08 L 682.993 -619.86 L 745.514 -619.86 L 745.514 -526.08 L 839.284 -526.08 L 839.284 -463.57 L 745.514 -463.57 L 745.514 -369.79 L 682.993 -369.79 Z" style="transform-origin: 511.074px -681.976px;"/><path d="M 266.064 -783.517 L 836.671 -219.849 L 824.385 -592.27 L 770.272 -646.86 L 729.032 -618.76 L 768.954 -579.23 L 781.094 -318.63 L 370.05 -729.67 L 649.695 -697.87 L 729.506 -618.72 L 770.306 -646.71 L 674.764 -742.5 L 266.064 -783.517 Z M 370.05 -729.67 L 781.094 -318.63 L 674.426 -425.3 L 579.87 -519.85 L 483.361 -616.36 L 370.05 -729.67 Z" style="transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(-0.707107, -0.707107, 0.707107, -0.707107, -49.38696, 22.90975)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" stroke="#cccccc">
+  <defs>
+    <clipPath id="mask-plus">
+      <rect x="0" y="0" height="24" width="13.75"></rect>
+      <rect x="0" y="0" width="17.25" height="17.25"></rect>
+      <rect width="18" x="20.75" height="5" y="13"></rect>
+      <rect width="18" height="5" x="12" y="20.75"></rect>
+      <rect x="0" y="0" width="21" height="13.75"></rect>
+    </clipPath>
+  </defs>
+  <path fill="none" stroke-linejoin="round" stroke-width="2px"
+    d="M 12,1
+       L 1,4
+       L 1,18
+       L 12,21
+       L 12,1
+       L 20,4
+       L 20,16
+       L 12,21 z"
+    clip-path="url(#mask-plus)"></path>
+  <line x1="19" y1="14" x2="19" y2="24" stroke="#198754" stroke-width="3"></line>
+  <line x1="14" y1="19" x2="24" y2="19" stroke="#198754" stroke-width="3"></line>
+</svg>
