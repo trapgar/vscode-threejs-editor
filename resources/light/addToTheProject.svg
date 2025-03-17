@@ -1,23 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" stroke="#3b3b3b">
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_2" viewBox="0 0 181.57 185.53">
   <defs>
-    <clipPath id="mask-plus">
-      <rect x="0" y="0" height="24" width="13.75"></rect>
-      <rect x="0" y="0" width="17.25" height="17.25"></rect>
-      <rect width="18" x="20.75" height="5" y="13"></rect>
-      <rect width="18" height="5" x="12" y="20.75"></rect>
-      <rect x="0" y="0" width="21" height="13.75"></rect>
-    </clipPath>
+    <style>
+      .cls-1 {
+        fill: #3b3b3b;
+      }
+
+      .cls-2 {
+        fill: #8bc24a;
+        stroke: #3b3b3b;
+        stroke-width: 3px;
+        stroke-miterlimit: 10;
+      }
+    </style>
   </defs>
-  <path fill="none" stroke-linejoin="round" stroke-width="2px"
-    d="M 12,1
-       L 1,4
-       L 1,18
-       L 12,21
-       L 12,1
-       L 20,4
-       L 20,16
-       L 12,21 z"
-    clip-path="url(#mask-plus)"></path>
-  <line x1="19" y1="14" x2="19" y2="24" stroke="#198754" stroke-width="3"></line>
-  <line x1="14" y1="19" x2="24" y2="19" stroke="#198754" stroke-width="3"></line>
+  <g id="Layer_1-2" data-name="Layer_1">
+    <g>
+      <path class="cls-1"
+        d="M 71.53 2.03 L 71.53 176.528 L 5.267 130.995 L 5.583 60.653 L 71.53 9.3 M 72.53 0 L 0 55.58 L 0 135.95 L 72.53 185.54 L 72.53 0 Z" />
+      <polygon class="cls-1"
+        points="124.4 149.45 93.76 149.45 93.76 123.41 124.4 123.41 124.4 92.77 150.45 92.77 150.45 123.41 163.26 123.41 163.26 55.58 72.53 0 72.53 185.53 124.4 157.18 124.4 149.45" />
+      <polygon class="cls-2"
+        points="181.07 123.41 150.44 123.41 150.44 92.77 124.39 92.77 124.39 123.41 93.75 123.41 93.75 149.45 124.39 149.45 124.39 180.09 150.44 180.09 150.44 149.45 181.07 149.45 181.07 123.41" />
+    </g>
+  </g>
 </svg>
