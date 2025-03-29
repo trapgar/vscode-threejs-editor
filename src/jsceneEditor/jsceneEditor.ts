@@ -222,17 +222,34 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 						provider.addNewShape(shape.split('.').at(-1)!);
 					}
 				);
-			})
+			}),
+			...Object.values(provider.statusBarItems)
 		);
 		return providerRegistration;
 	}
 
 	private static readonly viewType = 'gamejs.jscene';
 	private webview?: vscode.Webview;
+	private statusBarItems: {
+		objects: vscode.StatusBarItem;
+		vertices: vscode.StatusBarItem;
+		triangles: vscode.StatusBarItem;
+		frametime: vscode.StatusBarItem;
+	};
 
 	constructor(
 		private readonly context: vscode.ExtensionContext
-	) { }
+	) {
+		this.statusBarItems = {
+			objects: vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200),
+			vertices: vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200),
+			triangles: vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200),
+			frametime: vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200),
+		};
+		for (const type in this.statusBarItems)
+			// @ts-ignore
+			this.statusBarItems[type].show();
+	}
 
 	/**
 	 * Called when our custom editor is opened.
@@ -280,8 +297,12 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		// Receive message from the webview.
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
-				case 'delete':
-					this.deleteScratch(document, e.id);
+				case 'stats':
+					const { objects, vertices, triangles, frametime } = e;
+					this.statusBarItems.objects.text = `${objects} objects`;
+					this.statusBarItems.vertices.text = `${vertices} vertices`;
+					this.statusBarItems.triangles.text = `${triangles} triangles`;
+					this.statusBarItems.frametime.text = `${frametime.toFixed(2)} render time`;
 					return;
 			}
 		});

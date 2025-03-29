@@ -47,6 +47,10 @@
 		root.classList.remove('loading');
 	}
 
+	viewport.addEventListener('statschanged', ({ objects, vertices, triangles, frametime }) => {
+		vscode.postMessage({ type: 'stats', objects, vertices, triangles, frametime });
+	});
+
 	// Handle messages sent from the extension to the webview
 	window.addEventListener('message', event => {
 		const message = event.data; // The json data that the extension sent
