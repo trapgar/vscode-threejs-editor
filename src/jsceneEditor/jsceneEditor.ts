@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { getNonce, Disposable } from '../utils';
-import three from 'three';
+import { Disposable, getNonce } from '../utils';
 import { EXTENSION_PREFIX } from '../utils/constants';
 
 /**
@@ -195,7 +194,17 @@ class JSceneDocument extends Disposable implements vscode.CustomDocument {
 export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 	public static register(context: vscode.ExtensionContext): vscode.Disposable {
 		const provider = new JSceneEditorProvider(context);
-		const providerRegistration = vscode.window.registerCustomEditorProvider(JSceneEditorProvider.viewType, provider);
+		const providerRegistration = vscode.window.registerCustomEditorProvider(
+			JSceneEditorProvider.viewType,
+			provider,
+			// Initial render isn't super fast... need to check if this can be improved
+			{
+				webviewOptions: {
+					retainContextWhenHidden: true,
+				},
+				supportsMultipleEditorsPerDocument: false,
+			}
+		);
 		context.subscriptions.push(
 			...[
 				"vscode-threejs-editor.addToTheProject.basic.todo",
@@ -225,11 +234,13 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 			}),
 			...Object.values(provider.statusBarItems)
 		);
+
 		return providerRegistration;
 	}
 
 	private static readonly viewType = 'gamejs.jscene';
 	private webview?: vscode.Webview;
+	// TODO: Add items for the currently selected object
 	private statusBarItems: {
 		objects: vscode.StatusBarItem;
 		vertices: vscode.StatusBarItem;
@@ -246,9 +257,9 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 			triangles: vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200),
 			frametime: vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 200),
 		};
-		for (const type in this.statusBarItems)
-			// @ts-ignore
-			this.statusBarItems[type].show();
+
+		for (const item of Object.values(this.statusBarItems))
+			item.show();
 	}
 
 	/**
@@ -267,6 +278,19 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 			enableScripts: true,
 		};
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
+
+		webviewPanel.onDidChangeViewState(e => {
+			if (e.webviewPanel.active) {
+				this.statusBarItems.objects.show();
+				this.statusBarItems.vertices.show();
+				this.statusBarItems.triangles.show();
+				this.statusBarItems.frametime.show();
+			}
+			else {
+				for (const item of Object.values(this.statusBarItems))
+					item.hide();
+			}
+		});
 
 		function updateWebview() {
 			webviewPanel.webview.postMessage({
@@ -304,10 +328,18 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 					this.statusBarItems.triangles.text = `${triangles} triangles`;
 					this.statusBarItems.frametime.text = `${frametime.toFixed(2)} render time`;
 					return;
+				case 'scenegraphchanged':
+					const { state } = e;
+					this.handleSceneGraphChanged(document, state);
+					return;
 			}
 		});
 
 		updateWebview();
+	}
+
+	private handleSceneGraphChanged(document: vscode.TextDocument, newState: any) {
+		this.updateTextDocument(document, newState);
 	}
 
 	/**
@@ -378,20 +410,6 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		// return this.updateTextDocument(document, json);
 
 		this.webview?.postMessage({ type: 'add.shape', shape });
-	}
-
-	/**
-	 * Delete an existing scratch from a document.
-	 */
-	private deleteScratch(document: vscode.TextDocument, id: string) {
-		const json = this.getDocumentAsJson(document);
-		if (!Array.isArray(json.scratches)) {
-			return;
-		}
-
-		json.scratches = json.scratches.filter((note: any) => note.id !== id);
-
-		return this.updateTextDocument(document, json);
 	}
 
 	/**
