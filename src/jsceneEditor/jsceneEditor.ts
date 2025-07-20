@@ -33,8 +33,12 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		);
 		context.subscriptions.push(
 			...[
-				"vscode-threejs-editor.addToTheProject.basic.todo",
-			].map(cmd => vscode.commands.registerCommand(cmd, () => vscode.window.showInformationMessage(`Add Command '${cmd}' Executed!`))),
+				"todo",
+			].map(type => {
+				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.${type}`, () => {
+					provider.addNewBasic(type);
+				});
+			}),
 			...[
 				"directional",
 				"point",
@@ -43,7 +47,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 				"sky",
 			].map(light => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.lights.${light}`, () => {
-					return vscode.window.showInformationMessage(`Add Light '${light}' Command Executed!`);
+					provider.addNewLight(light);
 				});
 			}),
 			...[
@@ -54,7 +58,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 			].map(shape => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.shapes.${shape}`,
 					() => {
-						provider.addNewShape(shape.split('.').at(-1)!);
+						provider.addNewShape(shape);
 					}
 				);
 			}),
@@ -219,22 +223,23 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 	}
 
 	/**
-	 * Add a new scratch to the current document.
+	 * Add a new basic object to the current document.
+	 */
+	addNewBasic(type: string) {
+		this.webview?.postMessage({ type: 'add.basic', object: type });
+	}
+
+	/**
+	 * Add a new light to the current document.
+	 */
+	addNewLight(light: string) {
+		this.webview?.postMessage({ type: 'add.light', light });
+	}
+
+	/**
+	 * Add a new shape to the current document.
 	 */
 	addNewShape(shape: string) {
-		// const json = this.getDocumentAsJson(document);
-		// const character = JSceneEditorProvider.scratchCharacters[Math.floor(Math.random() * JSceneEditorProvider.scratchCharacters.length)];
-		// json.scratches = [
-		// 	...(Array.isArray(json.scratches) ? json.scratches : []),
-		// 	{
-		// 		id: getNonce(),
-		// 		text: character,
-		// 		created: Date.now(),
-		// 	}
-		// ];
-
-		// return this.updateTextDocument(document, json);
-
 		this.webview?.postMessage({ type: 'add.shape', shape });
 	}
 
