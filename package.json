@@ -85,7 +85,7 @@
         "displayName": "Three.js Scene Editor",
         "selector": [
           {
-            "filenamePattern": "*.jscene"
+            "filenamePattern": "file:/**/*.jscene"
           }
         ]
       }
