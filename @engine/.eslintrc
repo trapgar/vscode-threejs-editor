@@ -1,0 +1,15 @@
+{
+    "env": {
+        "browser": true,
+        "es2022": true
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "rules": {
+        "semi": "warn",
+        "quotes": ["warn", "single"],
+        "no-undef": "off",
+        "no-fallthrough": "off"
+    }
+}

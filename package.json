@@ -238,7 +238,9 @@
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
-    "watch": "webpack --watch",
+    "compile:engine": "node scripts/compile-engine.js",
+    "compile:engine:watch": "node scripts/compile-engine.js --watch",
+    "watch": "webpack --watch --info-verbosity verbose",
     "package": "webpack --mode production --devtool hidden-source-map",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
@@ -249,13 +251,13 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
-    "@types/three": "^0.174.0",
+    "@types/three": "^0.178.1",
     "@types/vscode": "^1.88.0",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "@vscode/test-cli": "^0.0.8",
     "@vscode/test-electron": "^2.3.9",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.25.8",
     "eslint": "^8.57.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
@@ -264,7 +266,7 @@
   },
   "dependencies": {
     "@vscode/codicons": "^0.0.36",
-    "three": "^0.163.0",
+    "three": "^0.178.0",
     "vscode-languageclient": "^9.0.1"
   }
 }
