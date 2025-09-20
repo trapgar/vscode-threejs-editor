@@ -1,10 +1,11 @@
-import { BoxGeometry, Camera, ColorRepresentation, ConeGeometry, DirectionalLight, Euler, EventDispatcher, GridHelper, Group, Mesh, MeshPhongMaterial, Object3D, Object3DEventMap, ObjectLoader, PerspectiveCamera, PlaneGeometry, Scene, SphereGeometry, Vector3, WebGLRenderer } from 'three';
+import { BoxGeometry, Camera, ColorRepresentation, ConeGeometry, DirectionalLight, Euler, EventDispatcher, GridHelper, Group, Mesh, MeshPhongMaterial, Object3D, Object3DEventMap, ObjectLoader, PerspectiveCamera, PlaneGeometry, PointLight, Scene, SphereGeometry, SpotLight, Vector3, WebGLRenderer } from 'three';
 // @ts-expect-error moduleResolution:nodenext issue ts(1479)
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 // @ts-expect-error moduleResolution:nodenext issue ts(1479)
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import ObjectSelector from './ObjectSelector';
 import { throttle } from './utils';
+import { addObject } from './mixins';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -45,6 +46,8 @@ type ViewportStatistics = {
 };
 
 type ViewportEventMap = {
+  focus: {};
+  blur: {};
   rendered: { frametime: number; };
   objectadded: { object: Object3D; };
   objectremoved: { object: Object3D; };
@@ -54,6 +57,7 @@ type ViewportEventMap = {
   objectselected: { selected?: Object3D; };
   statschanged: ViewportStatistics;
   'add.shape': { shape: 'cube' | 'sphere' | 'cone' | 'plane'; };
+  'add.light': { light: 'directional' | 'point' | 'sky' | 'spot'; };
 };
 
 export default class Viewport extends EventDispatcher<ViewportEventMap> {
@@ -87,6 +91,8 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
 
   constructor(root: HTMLElement) {
     super();
+    this.focus = this.focus.bind(this);
+    this.blur = this.blur.bind(this);
     this.tick = this.tick.bind(this);
     this.render = this.render.bind(this);
     this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -158,11 +164,14 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
       }
     });
 
+    this.addEventListener('focus', this.focus);
+    this.addEventListener('blur', this.blur);
     this.addEventListener('rendered', throttle(this.handleRendered, 100));
     this.addEventListener('objectadded', this.handleStatChanged);
     this.addEventListener('objectremoved', this.handleStatChanged);
     this.addEventListener('geometrychanged', this.handleStatChanged);
     this.addEventListener('add.shape', this.handleAddShape);
+    this.addEventListener('add.light', this.handleAddLight);
 
     document.addEventListener('keydown', e => {
       switch (e.key) {
@@ -248,7 +257,7 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
         const material = new MeshPhongMaterial({ color: 0xffffff });
         const cube = new Mesh(boxGeometry, material);
         cube.position.set(0, 0.5, 0);
-        this.addObject(newObject = cube);
+        newObject = cube;
         break;
       }
       case 'sphere': {
@@ -256,7 +265,7 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
         const material = new MeshPhongMaterial({ color: 0xffffff });
         const sphere = new Mesh(sphereGeometry, material);
         sphere.position.set(0, 0.5, 0);
-        this.addObject(newObject = sphere);
+        newObject = sphere;
         break;
       }
       case 'cone': {
@@ -264,7 +273,7 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
         const material = new MeshPhongMaterial({ color: 0xffffff });
         const cone = new Mesh(coneGeometry, material);
         cone.position.set(0, 0.5, 0);
-        this.addObject(newObject = cone);
+        newObject = cone;
         break;
       }
       case 'plane': {
@@ -272,7 +281,7 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
         const material = new MeshPhongMaterial({ color: 0xffffff });
         const plane = new Mesh(planeGeometry, material);
         plane.rotation.x = -Math.PI / 2; // Rotate to horizontal
-        this.addObject(newObject = plane);
+        newObject = plane;
         break;
       }
       default:
@@ -280,7 +289,29 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
         return;
     }
 
-    this.selector.connect(newObject);
+    this.addObject({ object: newObject, focus: true });
+  }
+
+  handleAddLight({ light }: ViewportEventMap['add.light']) {
+    const newObject: Object3D | undefined = {
+      'directional': () => {
+        const light = new DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 7.5);
+        return light;
+      },
+      'point': () => new PointLight(0x222222),
+      'spot': () => {
+        const light = new SpotLight(0xffffff, 1, 0, Math.PI * 0.1, 0);
+        light.position.set(5, 10, 7.5);
+        return light;
+      },
+      'sky': () => undefined,
+    }[light]?.();
+
+    if (newObject)
+      this.addObject({ object: newObject, focus: true });
+    else
+      console.warn(`Unknown light type: ${light}`);
   }
 
   /** Callback for when the scene was rendered */
@@ -345,7 +376,7 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
 
     // Try to maintain the currently selected object
     while (scene.children.length > 0)
-      this.addObject(scene.children[0]);
+      this.addObject({ object: scene.children[0] });
 
     if (this.selected) {
       const found = this.scene.getObjectByProperty('uuid', this.selected.uuid);
@@ -386,29 +417,7 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
     });
   }
 
-  addObject(object: Object3D, parent?: any, index?: number) {
-    object.traverse((child: any) => {
-      if (child.geometry)
-        this.geometries[child.geometry.uuid] = child.geometry;
-      if (child.material)
-        this.materials[child.material.uuid] = child.material;
-
-      // this.addCamera(child);
-      // this.addHelper(child);
-    });
-
-    if (!parent)
-      this.scene.add(object);
-    else {
-      parent.children.splice(index, 0, object);
-      object.parent = parent;
-    }
-
-    if (this.enabled) {
-      this.dispatchEvent({ type: 'objectadded', object });
-      this.dispatchEvent({ type: 'scenegraphchanged' });
-    }
-  }
+  addObject = addObject.bind(this);
 
   /** Resets the scene and adds a single cube mesh & directional light. */
   scaffold() {
@@ -444,8 +453,16 @@ export default class Viewport extends EventDispatcher<ViewportEventMap> {
     this.dispatchEvent({ type: 'rendered', frametime: endTime - startTime });
   }
 
+  private focus() {
+    this.tick(0);
+  }
+
+  private blur() {
+    cancelAnimationFrame(this.pid);
+  }
+
   /** Tick function for animations */
-  tick(delta: DOMHighResTimeStamp) {
+  private tick(delta: DOMHighResTimeStamp) {
     this.pid = requestAnimationFrame(this.tick);
 
     if (!this.animations.length)
