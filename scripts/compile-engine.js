@@ -7,7 +7,7 @@ const cmd = [
   '@engine/src/index.ts',
   '--bundle',
   '--minify',
-  '--sourcemap',
+  '--sourcemap=inline',
   '--outfile=media/libs/three.viewport.min.js',
 ];
 
