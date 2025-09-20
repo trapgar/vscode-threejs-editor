@@ -1,5 +1,3 @@
-// @ts-check
-
 // Script run within the webview itself.
 (function () {
 
