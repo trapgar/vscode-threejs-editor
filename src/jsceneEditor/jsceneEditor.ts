@@ -36,7 +36,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 				"todo",
 			].map(type => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.${type}`, () => {
-					provider.addNewBasic(type);
+					provider.webview?.postMessage({ type: 'add.basic', object: type });
 				});
 			}),
 			...[
@@ -47,7 +47,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 				"sky",
 			].map(light => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.lights.${light}`, () => {
-					provider.addNewLight(light);
+					provider.webview?.postMessage({ type: 'add.light', light });
 				});
 			}),
 			...[
@@ -58,7 +58,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 			].map(shape => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.shapes.${shape}`,
 					() => {
-						provider.addNewShape(shape);
+						provider.webview?.postMessage({ type: 'add.shape', shape });
 					}
 				);
 			}),
@@ -92,11 +92,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 			item.show();
 	}
 
-	/**
-	 * Called when our custom editor is opened.
-	 * 
-	 * 
-	 */
+	/** Called when our custom editor is opened. */
 	public async resolveCustomTextEditor(
 		document: vscode.TextDocument,
 		webviewPanel: vscode.WebviewPanel,
@@ -224,44 +220,6 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
-	}
-
-	/**
-	 * Add a new basic object to the current document.
-	 */
-	addNewBasic(type: string) {
-		this.webview?.postMessage({ type: 'add.basic', object: type });
-	}
-
-	/**
-	 * Add a new light to the current document.
-	 */
-	addNewLight(light: string) {
-		this.webview?.postMessage({ type: 'add.light', light });
-	}
-
-	/**
-	 * Add a new shape to the current document.
-	 */
-	addNewShape(shape: string) {
-		this.webview?.postMessage({ type: 'add.shape', shape });
-	}
-
-	/**
-	 * Try to get a current document as json text.
-	 */
-	private getDocumentAsJson(document: vscode.TextDocument): any {
-		const text = document.getText();
-		if (text.trim().length === 0) {
-			return {};
-		}
-
-		try {
-			return JSON.parse(text);
-		}
-		catch {
-			throw new Error('Could not get document as json. Content is not valid json');
-		}
 	}
 
 	/**
