@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import { EXTENSION_PREFIX, EXTENSION_SHORTHAND } from '../constants';
 import { getNonce } from '../utils';
-import { EXTENSION_PREFIX } from '../utils/constants';
 
 /**
  * Provider for jscene editors.
@@ -33,28 +33,28 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		);
 		context.subscriptions.push(
 			...[
-				"todo",
+				'todo',
 			].map(type => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.${type}`, () => {
 					provider.webview?.postMessage({ type: 'add.basic', object: type });
 				});
 			}),
 			...[
-				"directional",
-				"point",
-				"spot",
-				"rect",
-				"sky",
+				'directional',
+				'point',
+				'spot',
+				'rect',
+				'sky',
 			].map(light => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.lights.${light}`, () => {
 					provider.webview?.postMessage({ type: 'add.light', light });
 				});
 			}),
 			...[
-				"cube",
-				"sphere",
-				"cone",
-				"plane"
+				'cube',
+				'sphere',
+				'cone',
+				'plane'
 			].map(shape => {
 				return vscode.commands.registerCommand(`${EXTENSION_PREFIX}.addToTheProject.shapes.${shape}`,
 					() => {
@@ -68,7 +68,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		return providerRegistration;
 	}
 
-	private static readonly viewType = 'gamejs.jscene';
+	private static readonly viewType = `${EXTENSION_SHORTHAND}.jscene`;
 	private webview?: vscode.Webview;
 	// TODO: Add items for the currently selected object
 	private statusBarItems: {
@@ -108,6 +108,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		webviewPanel.onDidChangeViewState(e => {
 			if (e.webviewPanel.active) {
 				webviewPanel.webview.postMessage({ type: 'focus' });
+				vscode.commands.executeCommand(`workbench.view.${EXTENSION_SHORTHAND}.sceneExplorer`);
 
 				this.statusBarItems.objects.show();
 				this.statusBarItems.vertices.show();

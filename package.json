@@ -109,11 +109,11 @@
       "sceneExplorer": [
         {
           "id": "sceneOutliner",
-          "name": "%extension.sceneOutliner%"
+          "name": "%gamejs.sceneOutliner%"
         },
         {
           "id": "objectDetails",
-          "name": "%extension.objectDetails%",
+          "name": "%gamejs.objectDetails%",
           "visibility": "collapsed"
         }
       ]

@@ -1,6 +1,6 @@
 {
-	"extension.sceneOutliner": "Scene Outliner",
-	"extension.objectDetails": "Object Details",
+	"gamejs.sceneOutliner": "Scene Outliner",
+	"gamejs.objectDetails": "Object Details",
 	"gamejs.Configuration": "JavaScript Game Developer",
 	"gamejs.displayUnits": "Measuring System to display units in",
 	"gamejs.displayUnits.metric.description": "Metric System (meters, kilograms, etc.)",

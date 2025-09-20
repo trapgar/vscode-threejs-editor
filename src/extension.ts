@@ -1,5 +1,6 @@
-import { JSceneEditorProvider } from './jsceneEditor/jsceneEditor';
 import * as vscode from 'vscode';
+import { EXTENSION_SHORTHAND } from './constants';
+import { JSceneEditorProvider } from './jsceneEditor/jsceneEditor';
 import SceneEditorPanel from './sceneEditor/sceneEditorPanel';
 import { Dependency, SceneOutlineProvider } from './sceneOutliner';
 
@@ -19,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const sceneOutlineProvider = new SceneOutlineProvider(rootPath);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('gamejs.helloWorld', () => SceneEditorPanel.createOrShow(context.extensionUri)),
+		vscode.commands.registerCommand(`${EXTENSION_SHORTHAND}.helloWorld`, () => SceneEditorPanel.createOrShow(context.extensionUri)),
 
 		vscode.window.registerTreeDataProvider('sceneOutliner', sceneOutlineProvider),
 		vscode.commands.registerCommand('sceneOutliner.refreshList', () => sceneOutlineProvider.refresh()),
