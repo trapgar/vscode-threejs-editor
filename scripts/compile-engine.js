@@ -1,9 +1,5 @@
-const fs = require('node:fs');
-const path = require('node:path');
 const { execSync } = require('child_process');
-const debounce = require('./utils/debounce');
 
-const PATH_SRC = path.join(__dirname, '..', 'src');
 const watch = process.argv.find(a => a.startsWith('--watch'));
 
 const cmd = [
@@ -24,12 +20,13 @@ const build = () => {
 };
 
 if (watch) {
-  fs.watch(PATH_SRC, { recursive: true }, debounce((eventType) => {
-    if (eventType === 'change') {
-      console.clear();
-      build();
-    }
-  }, 500));
+  cmd.push('--watch');
+  // fs.watch(PATH_SRC, { recursive: true }, debounce((eventType) => {
+  //   if (eventType === 'change') {
+  //     console.clear();
+  //     build();
+  //   }
+  // }, 500));
 }
 
 console.log('Building @engine...');
