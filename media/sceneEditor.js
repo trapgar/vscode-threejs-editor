@@ -100,9 +100,8 @@
 				vscode.setState({ text });
 
 				return;
-			case 'add.shape':
-				const shape = message.shape;
-				viewport.dispatchEvent({ type: 'add.shape', shape });
+			default:
+				viewport.dispatchEvent({ ...message });
 				return;
 		}
 	});

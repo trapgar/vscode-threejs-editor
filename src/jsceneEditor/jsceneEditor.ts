@@ -111,12 +111,16 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 
 		webviewPanel.onDidChangeViewState(e => {
 			if (e.webviewPanel.active) {
+				webviewPanel.webview.postMessage({ type: 'focus' });
+
 				this.statusBarItems.objects.show();
 				this.statusBarItems.vertices.show();
 				this.statusBarItems.triangles.show();
 				this.statusBarItems.frametime.show();
 			}
 			else {
+				webviewPanel.webview.postMessage({ type: 'blur' });
+
 				for (const item of Object.values(this.statusBarItems))
 					item.hide();
 			}

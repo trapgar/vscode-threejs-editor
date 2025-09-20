@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "target": "ES2022",
+    "lib": [
+      "DOM",
+      "es2022"
+    ],
+    "types": [],
+    "rootDir": "src",
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "out"
+  }
+}
