@@ -1,6 +1,7 @@
-# gamejs-ui README
+# gamejs-ui
 
 <!-- package name idea: trident? -->
+[https://threejs.org/editor/](https://threejs.org/editor/)
 
 This is the README for your extension "gamejs-ui". After writing up a brief description, we recommend including the following sections.
 
