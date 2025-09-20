@@ -5,14 +5,47 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "compile:engine:watch",
+			"script": "engine:watch",
 			"isBackground": true,
-			"problemMatcher": "$esbuild-watch",
+			"presentation": {
+				"reveal": "silent",
+				"group": "watchers"
+			},
+			"problemMatcher": [
+				{
+					"owner": "esbuild",
+					"pattern": [
+						{
+							"regexp": "^[✘▲] \\[([A-Z]+)\\] (.+)",
+							"severity": 1,
+							"message": 2
+						},
+						{
+							"regexp": "^(?:\\t| {4})(?!\\s)([^:]+)(?::([0-9]+))?(?::([0-9]+))?:$",
+							"file": 1,
+							"line": 2,
+							"column": 3
+						}
+					],
+					"severity": "error",
+					"applyTo": "closedDocuments",
+					"source": "esbuild",
+					"fileLocation": "relative",
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": {
+							"regexp": "\\[watch\\] build started"
+						},
+						"endsPattern": {
+							"regexp": "\\[watch\\] build finished"
+						}
+					}
+				}
+			]
 		},
 		{
 			"type": "npm",
 			"script": "watch",
-			"problemMatcher": "$ts-webpack-watch",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "never",
@@ -21,7 +54,39 @@
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
+			},
+			"problemMatcher": [
+				{
+					"owner": "typescript",
+					"source": "ts",
+					"applyTo": "closedDocuments",
+					"fileLocation": "absolute",
+					"severity": "error",
+					"pattern": [
+						{
+							"regexp": "\\[tsl\\] (ERROR|WARNING) in (.*)?\\((\\d+),(\\d+)\\)",
+							"severity": 1,
+							"file": 2,
+							"line": 3,
+							"column": 4
+						},
+						{
+							"regexp": "\\s*TS(\\d+):\\s*(.*)$",
+							"code": 1,
+							"message": 2
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": {
+							"regexp": "[Cc]ompiling.*?|[Cc]ompil(ation|er) .*?starting"
+						},
+						"endsPattern": {
+							"regexp": "[Cc]ompiled (.*?successfully|with .*?(error|warning))|[Cc]ompil(ation|er) .*?finished"
+						}
+					}
+				}
+			]
 		},
 		{
 			"type": "npm",
@@ -37,7 +102,7 @@
 		{
 			"label": "npm: run extension",
 			"dependsOn": [
-				"npm: compile:engine:watch",
+				"npm: engine:watch",
 				"npm: watch"
 			],
 			"problemMatcher": []
