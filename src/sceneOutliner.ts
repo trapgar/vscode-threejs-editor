@@ -1,107 +1,109 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 import * as path from 'path';
+import fs from 'node:fs';
+import { EXTENSION_LANGUAGEID } from './constants';
+import { Scene, Object3D, Camera, ObjectLoader } from 'three';
 
-export class SceneOutlineProvider implements vscode.TreeDataProvider<Dependency> {
+type JLevel = {
+	project: any;
+	camera: Camera;
+	scene: { object: Scene; }
+	scripts: string[]
+};
 
-	private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined | void> = new vscode.EventEmitter<Dependency | undefined | void>();
-	readonly onDidChangeTreeData: vscode.Event<Dependency | undefined | void> = this._onDidChangeTreeData.event;
+export class SceneOutlineProvider implements vscode.TreeDataProvider<SceneGraphActor> {
+	private _onDidChangeTreeData: vscode.EventEmitter<SceneGraphActor | undefined | void> = new vscode.EventEmitter<SceneGraphActor | undefined | void>();
+	readonly onDidChangeTreeData: vscode.Event<SceneGraphActor | undefined | void> = this._onDidChangeTreeData.event;
+	private scene?: Scene;
 
 	constructor(private workspaceRoot: string | undefined) {
+	}
+
+	async handleChangedSceneGraph(uri: vscode.Uri) {
+		const loader = new ObjectLoader();
+		const contents = fs.readFileSync(uri.fsPath, 'utf-8');
+		const json = JSON.parse(contents);
+		this.scene = await loader.parseAsync(json.scene) as Scene;
+		this.refresh();
 	}
 
 	refresh(): void {
 		this._onDidChangeTreeData.fire();
 	}
 
-	getTreeItem(element: Dependency): vscode.TreeItem {
+	getTreeItem(element: SceneGraphActor): vscode.TreeItem {
 		return element;
 	}
 
-	getChildren(element?: Dependency): Thenable<Dependency[]> {
+	getChildren(element?: SceneGraphActor): Thenable<SceneGraphActor[]> {
 		if (!this.workspaceRoot) {
 			vscode.window.showInformationMessage('No dependency in empty workspace');
 			return Promise.resolve([]);
 		}
+		else if (!this.scene)
+			return Promise.resolve([]);
 
-		if (element) {
-			return Promise.resolve(this.getDepsInSceneJson(path.join(this.workspaceRoot, 'node_modules', element.label, 'package.json')));
-		}
+		// TODO: when does this have a value??
+		if (element)
+			return Promise.resolve([]);
 		else {
-			const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
-			if (this.pathExists(packageJsonPath)) {
-				return Promise.resolve(this.getDepsInSceneJson(packageJsonPath));
-			}
-			else {
-				vscode.window.showInformationMessage('Workspace has no package.json');
-				return Promise.resolve([]);
-			}
+			return Promise.resolve(
+				this.scene.children.map(this.getNodeAsTreeItem)
+			);
 		}
 	}
 
 	/**
 	 * Given the path to package.json, read all its dependencies and devDependencies.
 	 */
-	private getDepsInSceneJson(sceneJsonPath: string): Dependency[] {
-		const workspaceRoot = this.workspaceRoot;
-		if (this.pathExists(sceneJsonPath) && workspaceRoot) {
-			const packageJson = JSON.parse(fs.readFileSync(sceneJsonPath, 'utf-8'));
+	private getNodeAsTreeItem(node: Object3D): SceneGraphActor {
+		if (node.children?.length)
+			return new SceneGraphActor(node.name, node.type, vscode.TreeItemCollapsibleState.Collapsed);
 
-			const toDep = (moduleName: string, version: string): Dependency => {
-				if (this.pathExists(path.join(workspaceRoot, 'node_modules', moduleName))) {
-					return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.Collapsed);
-				}
-				else {
-					return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.None, {
-						command: 'sceneOutliner.viewActorDetails',
-						title: '',
-						arguments: [moduleName]
-					});
-				}
-			};
-
-			const deps = packageJson.dependencies
-				? Object.keys(packageJson.dependencies).map(dep => toDep(dep, packageJson.dependencies[dep]))
-				: [];
-			const devDeps = packageJson.devDependencies
-				? Object.keys(packageJson.devDependencies).map(dep => toDep(dep, packageJson.devDependencies[dep]))
-				: [];
-			return deps.concat(devDeps);
-		}
-		else {
-			return [];
-		}
-	}
-
-	private pathExists(p: string): boolean {
-		try {
-			fs.accessSync(p);
-		}
-		catch (err) {
-			return false;
-		}
-
-		return true;
+		return new SceneGraphActor(node.name,
+			node.type,
+			vscode.TreeItemCollapsibleState.None,
+			{
+				command: 'sceneOutliner.viewActorDetails',
+				title: 'View Actor Details',
+				arguments: [node],
+			}
+		);
 	}
 }
 
-export class Dependency extends vscode.TreeItem {
-
+export class SceneGraphActor extends vscode.TreeItem {
 	constructor(
 		public readonly label: string,
-		private readonly version: string,
+		private readonly type: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
 		super(label, collapsibleState);
 
-		this.tooltip = `${this.label}-${this.version}`;
-		this.description = this.version;
+		this.tooltip = `${this.label}-${this.type}`;
+		this.description = this.type;
+
+		const icon = {
+			// 'AmbientLight': 'light',
+			// 'DirectionalLight': 'light',
+			// 'HemisphereLight': 'light',
+			// 'PointLight': 'light',
+			// 'SpotLight': 'light',
+
+			// 'OrthographicCamera': 'camera',
+			// 'PerspectiveCamera': 'camera',
+		}[type] ?? 'mesh';
+
+		// this.iconPath = {
+		// 	light: path.join(__filename, '..', '..', 'resources', 'light', `${icon}.svg`),
+		// 	dark: path.join(__filename, '..', '..', 'resources', 'dark', `${icon}.svg`),
+		// };
 	}
 
 	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
+		light: vscode.Uri.file(path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg')),
+		dark: vscode.Uri.file(path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')),
 	};
 
 	contextValue = 'dependency';

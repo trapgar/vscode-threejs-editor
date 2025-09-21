@@ -11,7 +11,9 @@
     "Language Packs",
     "Visualization"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -32,7 +34,7 @@
       },
       {
         "command": "sceneOutliner.refreshList",
-        "title": "Refresh",
+        "title": "JavaScript Game Developer: Refresh Scene Outliner",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
@@ -112,8 +114,8 @@
           "name": "%gamejs.sceneOutliner%"
         },
         {
-          "id": "objectDetails",
-          "name": "%gamejs.objectDetails%",
+          "id": "actorOutliner",
+          "name": "%gamejs.actorOutliner%",
           "visibility": "collapsed"
         }
       ]

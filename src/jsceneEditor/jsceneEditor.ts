@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { EXTENSION_PREFIX, EXTENSION_SHORTHAND } from '../constants';
+import { EXTENSION_LANGUAGEID, EXTENSION_PREFIX, EXTENSION_SHORTHAND } from '../constants';
 import { getNonce } from '../utils';
 
 /**
@@ -68,7 +68,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		return providerRegistration;
 	}
 
-	private static readonly viewType = `${EXTENSION_SHORTHAND}.jscene`;
+	private static readonly viewType = `${EXTENSION_SHORTHAND}.${EXTENSION_LANGUAGEID}`;
 	private webview?: vscode.Webview;
 	// TODO: Add items for the currently selected object
 	private statusBarItems: {
@@ -108,7 +108,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		webviewPanel.onDidChangeViewState(e => {
 			if (e.webviewPanel.active) {
 				webviewPanel.webview.postMessage({ type: 'focus' });
-				vscode.commands.executeCommand(`workbench.view.${EXTENSION_SHORTHAND}.sceneExplorer`);
+				vscode.commands.executeCommand('workbench.view.extension.sceneExplorer');
 
 				this.statusBarItems.objects.show();
 				this.statusBarItems.vertices.show();
@@ -167,6 +167,7 @@ export class JSceneEditorProvider implements vscode.CustomTextEditorProvider {
 		});
 
 		updateWebview();
+		vscode.commands.executeCommand('sceneOutliner.refreshList');
 	}
 
 	private handleSceneGraphChanged(document: vscode.TextDocument, newState: any) {
