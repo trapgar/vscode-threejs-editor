@@ -34,7 +34,8 @@
       },
       {
         "command": "sceneOutliner.refreshList",
-        "title": "JavaScript Game Developer: Refresh Scene Outliner",
+        "title": "Refresh Scene Outliner",
+        "category": "JavaScript Game Developer",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
